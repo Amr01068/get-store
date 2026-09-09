@@ -636,7 +636,7 @@ class _AppDetailsScreenState extends State<AppDetailsScreen> with WidgetsBinding
                     background: Stack(
                       fit: StackFit.expand,
                       children: [
-                        Image.network(
+                        buildAppImage(
                           _currentApp.coverUrl,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) => Container(
@@ -720,9 +720,11 @@ class _AppDetailsScreenState extends State<AppDetailsScreen> with WidgetsBinding
                                 child: SizedBox(
                                   width: 100,
                                   height: 100,
-                                  child: Image.network(
+                                  child: buildAppImage(
                                     _currentApp.iconUrl,
                                     fit: BoxFit.cover,
+                                    width: 100,
+                                    height: 100,
                                     errorBuilder: (context, error, stackTrace) => Container(
                                       width: 100,
                                       height: 100,
@@ -878,7 +880,7 @@ class _AppDetailsScreenState extends State<AppDetailsScreen> with WidgetsBinding
                                       color: Colors.grey[800],
                                       borderRadius: BorderRadius.circular(12),
                                       image: DecorationImage(
-                                        image: NetworkImage(_currentApp.screenshots[index]),
+                                        image: appImageProvider(_currentApp.screenshots[index]),
                                         fit: BoxFit.cover,
                                       ),
                                     ),
@@ -1433,7 +1435,7 @@ class _FullScreenGalleryState extends State<FullScreenGallery> {
         itemBuilder: (context, index) {
           return InteractiveViewer(
             child: Center(
-              child: Image.network(widget.images[index]),
+              child: buildAppImage(widget.images[index]),
             ),
           );
         },
