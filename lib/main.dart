@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:device_apps/device_apps.dart';
+import 'package:installed_apps/installed_apps.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -1214,10 +1214,10 @@ Widget _buildLatestProductsDrawer() {
                                     ),
                                     child: app.status == 'coming_soon'
                                         ? const Text('قريباً', style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold))
-                                        : FutureBuilder<bool>(
-                                            future: kIsWeb ? Future.value(false) : DeviceApps.isAppInstalled(app.packageName),
+                                        : FutureBuilder<bool?>(
+                                            future: kIsWeb ? Future.value(false) : InstalledApps.isAppInstalled(app.packageName),
                                             builder: (context, snapshot) {
-                                              return Text((snapshot.data ?? false) ? 'فتح' : 'تثبيت', style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold));
+                                              return Text((snapshot.data == true) ? 'فتح' : 'تثبيت', style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold));
                                             }
                                           ),
                                   ),
@@ -1791,10 +1791,10 @@ class AppSearchDelegate extends SearchDelegate<AppModel?> {
                   elevation: 0,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                 ),
-                child: FutureBuilder<bool>(
-                  future: kIsWeb ? Future.value(false) : DeviceApps.isAppInstalled(app.packageName),
+                child: FutureBuilder<bool?>(
+                  future: kIsWeb ? Future.value(false) : InstalledApps.isAppInstalled(app.packageName),
                   builder: (context, snapshot) {
-                    return Text((snapshot.data ?? false) ? 'فتح' : 'تثبيت');
+                    return Text((snapshot.data == true) ? 'فتح' : 'تثبيت');
                   }
                 ),
               ),

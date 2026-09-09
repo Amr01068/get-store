@@ -12,7 +12,8 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:open_filex/open_filex.dart';
-import 'package:device_apps/device_apps.dart';
+import 'package:installed_apps/installed_apps.dart';
+import 'package:installed_apps/app_info.dart';
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
@@ -207,7 +208,7 @@ class _AppDetailsScreenState extends State<AppDetailsScreen> with WidgetsBinding
   Future<void> _checkInstallStatus() async {
     try {
       if (kIsWeb) return;
-      Application? installedApp = await DeviceApps.getApp(_currentApp.packageName, true);
+      AppInfo? installedApp = await InstalledApps.getAppInfo(_currentApp.packageName);
       if (mounted) {
         setState(() {
           if (installedApp != null) {
@@ -1247,7 +1248,7 @@ class _AppDetailsScreenState extends State<AppDetailsScreen> with WidgetsBinding
             child: ElevatedButton(
               onPressed: () async {
                 try {
-                  await DeviceApps.openApp(widget.app.packageName);
+                  await InstalledApps.startApp(widget.app.packageName);
                 } catch (e) {
                   print('Failed to open app: $e');
                 }
