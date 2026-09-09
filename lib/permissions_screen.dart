@@ -19,6 +19,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
     try {
       await [
         Permission.storage,
+        Permission.notification,
         Permission.requestInstallPackages,
       ].request();
     } catch (e) {

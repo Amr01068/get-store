@@ -29,17 +29,36 @@ class MyHttpOverrides extends HttpOverrides {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = MyHttpOverrides();
-  await Supabase.initialize(
-    url: 'https://clzgnklxjrydblnkugkw.supabase.co',
-    publishableKey: 'sb_publishable_1U4qHtiyjbBeCOAxRiLbPQ_QdXOpSzu',
-  );
-  
-  await DownloadManager.instance.initNotifications();
-  
-  final prefs = await SharedPreferences.getInstance();
-  final hasSeenPermissions = prefs.getBool('has_seen_permissions') ?? false;
-  
+
+  FlutterError.onError = (details) {
+    FlutterError.presentError(details);
+    debugPrint('Flutter Error: ${details.exception}');
+  };
+
+  try {
+    await Supabase.initialize(
+      url: 'https://clzgnklxjrydblnkugkw.supabase.co',
+      publishableKey: 'sb_publishable_1U4qHtiyjbBeCOAxRiLbPQ_QdXOpSzu',
+    );
+  } catch (e) {
+    debugPrint('Supabase init error: $e');
+  }
+
+  bool hasSeenPermissions = false;
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    hasSeenPermissions = prefs.getBool('has_seen_permissions') ?? false;
+  } catch (e) {
+    debugPrint('SharedPreferences init error: $e');
+  }
+
   runApp(GetStoreApp(hasSeenPermissions: hasSeenPermissions));
+
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    DownloadManager.instance.initNotifications().catchError((e) {
+      debugPrint('DownloadManager init error: $e');
+    });
+  });
 }
 
 class GetStoreApp extends StatelessWidget {

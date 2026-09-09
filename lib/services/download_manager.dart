@@ -44,24 +44,30 @@ class DownloadManager extends ChangeNotifier {
 
   Future<void> initNotifications() async {
     if (_isNotificationsInitialized) return;
-    
-    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
-    const initSettings = InitializationSettings(android: androidSettings);
+    try {
+      const androidSettings = AndroidInitializationSettings('@mipmap/launcher_icon');
+      const initSettings = InitializationSettings(android: androidSettings);
 
-    await _notificationsPlugin.initialize(
-      initSettings,
-      onDidReceiveNotificationResponse: (NotificationResponse response) {
-        // Notification tapped logic
-      },
-    );
+      await _notificationsPlugin.initialize(
+        initSettings,
+        onDidReceiveNotificationResponse: (NotificationResponse response) {
+          // Notification tapped logic
+        },
+      );
 
-    final androidImplementation = _notificationsPlugin
-        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
-    if (androidImplementation != null) {
-      await androidImplementation.requestNotificationsPermission();
+      final androidImplementation = _notificationsPlugin
+          .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+      if (androidImplementation != null) {
+        androidImplementation.requestNotificationsPermission().catchError((e) {
+          debugPrint('Error requesting notification permission: $e');
+          return null;
+        });
+      }
+
+      _isNotificationsInitialized = true;
+    } catch (e) {
+      debugPrint('Error in initNotifications: $e');
     }
-
-    _isNotificationsInitialized = true;
   }
 
   Dio _createDio() {
