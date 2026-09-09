@@ -13,8 +13,16 @@ workflows:
       - name: Get Flutter dependencies
         script: |
           flutter pub get
+      - name: Patch plugins namespace for AGP 8
+        script: |
+          find "$HOME/.pub-cache" -name "build.gradle" 2>/dev/null | while read -r file; do
+            if grep -q "deviceapps" "$file" && ! grep -q "namespace" "$file"; then
+              echo "Patching namespace in $file"
+              sed -i '' 's/compileSdkVersion 30/namespace "fr.g123k.deviceapps"\n    compileSdkVersion 30/g' "$file" 2>/dev/null || sed -i 's/compileSdkVersion 30/namespace "fr.g123k.deviceapps"\n    compileSdkVersion 30/g' "$file"
+            fi
+          done
       - name: Build Android Release APK
         script: |
-          flutter build apk --release
+          flutter build apk --release --android-skip-build-dependency-validation
     artifacts:
       - build/**/outputs/**/*.apk

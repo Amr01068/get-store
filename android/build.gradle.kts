@@ -20,7 +20,7 @@ subprojects {
 }
 
 subprojects {
-    afterEvaluate {
+    plugins.withId("com.android.library") {
         val android = extensions.findByName("android")
         if (android != null) {
             val getNamespace = android.javaClass.methods.find { it.name == "getNamespace" }
